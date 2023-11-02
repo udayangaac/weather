@@ -7,14 +7,16 @@ import (
 	"github.com/udayangaac/weather/internal/models/forecast"
 )
 
-// GetForecast fetches weather forecast for a specific city in a given country.
-// It uses the provided forecastService and geoCodingService to retrieve the forecast summary.
+// GetForecast fetches the weather forecast for a specific city in a given country.
+// It utilizes the provided forecastService and geoCodingService to obtain the forecast summary.
+//
 // Parameters:
 //
 //	country: The name of the country.
 //	city: The name of the city for which to get the weather forecast.
 //	forecastService: An implementation of the ForecastService interface.
 //	geoCodingService: An implementation of the GeoCodingService interface.
+//	currentTime: The current time used to calculate the next forecast update duration.
 //
 // Returns:
 //
@@ -27,7 +29,7 @@ func GetForecast(country string, city string, forecastService ForecastService, g
 	)
 
 	// Set the next forecast update duration (e.g., 5 seconds).
-	nextUpdate = time.Second * 5
+	nextUpdate = 5 * time.Second
 
 	// Get the coordinates (latitude and longitude) for the provided city and country.
 	lat, lon, err = geoCodingService.GetCoordByCityName(country, city)
