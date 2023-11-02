@@ -20,5 +20,5 @@ vendor/
 # Go workspace file
 go.work
 
-# Editors related directories
+# Editor related directories
 .vscode/
