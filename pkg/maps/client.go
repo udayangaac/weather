@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// DefaultClient creates and returns an HTTP client with custom settings.
 func DefaultClient(timeoutSeconds time.Duration) *http.Client {
 	netTransport := &http.Transport{
 		Dial: (&net.Dialer{
@@ -14,7 +15,6 @@ func DefaultClient(timeoutSeconds time.Duration) *http.Client {
 		DisableCompression:  false,
 		TLSHandshakeTimeout: timeoutSeconds * time.Second,
 	}
-
 	return &http.Client{
 		Timeout:   time.Second * timeoutSeconds,
 		Transport: netTransport,

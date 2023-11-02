@@ -4,10 +4,13 @@ import (
 	"net/http"
 )
 
+// SearchPlaceRequestParams represents the parameters for a place search request.
 type SearchPlaceRequestParams struct {
-	Country, City string
+	Country string
+	City    string
 }
 
+// Build extract parameter from the HTTP request.
 func (r SearchPlaceRequestParams) Build(req *http.Request) error {
 	q := req.URL.Query()
 	q.Add("city", r.City)

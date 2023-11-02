@@ -4,11 +4,13 @@ import (
 	"time"
 )
 
+// Poller is an interface for polling and stopping polling.
 type Poller interface {
 	Poll()
 	Stop()
 }
 
+// poller is a struct that implements the Poller interface.
 type poller struct {
 	timer       *time.Timer
 	stopChan    chan struct{}
@@ -16,6 +18,7 @@ type poller struct {
 	callback    func() (time.Duration, error)
 }
 
+// NewPoller creates a new Poller instance with the provided callback function.
 func NewPoller(callback func() (time.Duration, error)) Poller {
 	p := poller{
 		triggerChan: make(chan struct{}),
@@ -26,6 +29,7 @@ func NewPoller(callback func() (time.Duration, error)) Poller {
 	return &p
 }
 
+// init initializes the polling mechanism in a goroutine.
 func (p *poller) init() {
 	go func(pInternal *poller) {
 		for {
@@ -52,10 +56,12 @@ func (p *poller) init() {
 	}(p)
 }
 
+// Poll triggers the polling mechanism.
 func (p *poller) Poll() {
 	p.triggerChan <- struct{}{}
 }
 
+// Stop stops the polling mechanism.
 func (p *poller) Stop() {
 	p.stopChan <- struct{}{}
 }

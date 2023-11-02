@@ -6,23 +6,28 @@ import (
 )
 
 const (
-	geoCodeUrl = "https://geocode.maps.co/search/"
+	geoCodeURL = "https://geocode.maps.co/search/"
 )
 
+// Client represents the interface for the geocoding client.
 type Client interface {
 	SearchPlace(ctx context.Context, params SearchPlaceRequestParams) (*SearchPlaceResponse, error)
 }
 
+// client is the implementation of the geocoding client.
 type client struct {
-	HttpClient *http.Client
+	HTTPClient *http.Client
 }
 
+// NewClient creates a new geocoding client with the provided HTTP client.
 func NewClient(httpClient *http.Client) Client {
-	return &client{HttpClient: httpClient}
+	return &client{HTTPClient: httpClient}
 }
 
+// SearchPlace sends a geocoding request and returns the response.
 func (c *client) SearchPlace(ctx context.Context, params SearchPlaceRequestParams) (*SearchPlaceResponse, error) {
-	httpReq, err := http.NewRequest("GET", geoCodeUrl, nil)
+
+	httpReq, err := http.NewRequest("GET", geoCodeURL, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -31,11 +36,12 @@ func (c *client) SearchPlace(ctx context.Context, params SearchPlaceRequestParam
 		return nil, err
 	}
 
-	httpResp, err := c.HttpClient.Do(httpReq)
+	httpResp, err := c.HTTPClient.Do(httpReq)
 	if err != nil {
 		return nil, err
 	}
 
+	// Create a new response object and read the HTTP response into it.
 	resp := NewSearchPlaceResponse()
 	if err = resp.Read(httpResp); err != nil {
 		return nil, err

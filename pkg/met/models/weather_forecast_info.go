@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type WetherForecastInfo struct {
+type WeatherForecastInfo struct {
 	Geometry   Geometry   `json:"geometry"`
 	Properties Properties `json:"properties"`
 	Type       string     `json:"type"`

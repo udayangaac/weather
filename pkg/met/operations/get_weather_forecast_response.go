@@ -8,17 +8,20 @@ import (
 	"github.com/udayangaac/weather/pkg/met/models"
 )
 
-func NewGetWetherForecastResponse() *GetWetherForecastResponse {
-	return &GetWetherForecastResponse{
-		Body: &models.WetherForecastInfo{},
+// NewGetWeatherForecastResponse initializes a new GetWeatherForecastResponse object
+func NewGetWeatherForecastResponse() *GetWeatherForecastResponse {
+	return &GetWeatherForecastResponse{
+		Body: &models.WeatherForecastInfo{},
 	}
 }
 
-type GetWetherForecastResponse struct {
-	Body *models.WetherForecastInfo
+// GetWeatherForecastResponse represents the response structure for weather forecasts
+type GetWeatherForecastResponse struct {
+	Body *models.WeatherForecastInfo
 }
 
-func (r *GetWetherForecastResponse) Read(resp *http.Response) error {
+// Read reads and processes the HTTP response body
+func (r *GetWeatherForecastResponse) Read(resp *http.Response) error {
 	defer resp.Body.Close()
 
 	buf, err := io.ReadAll(resp.Body)
@@ -30,5 +33,6 @@ func (r *GetWetherForecastResponse) Read(resp *http.Response) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

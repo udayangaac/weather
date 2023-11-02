@@ -5,23 +5,26 @@ import (
 	"net/http"
 )
 
-const (
-	locationForecastCompactURL = "https://api.met.no/weatherapi/locationforecast/2.0/compact/"
-)
+// Define the URL for the weather forecast API.
+const locationForecastCompactURL = "https://api.met.no/weatherapi/locationforecast/2.0/compact/"
 
+// Client is an interface for interacting with the weather forecast service.
 type Client interface {
-	GetWhetherForecast(ctx context.Context, params GetWetherForecastRequestParams) (*GetWetherForecastResponse, error)
+	GetWeatherForecast(ctx context.Context, params GetWeatherForecastRequestParams) (*GetWeatherForecastResponse, error)
 }
 
+// client is the implementation of the Client interface.
 type client struct {
 	HttpClient *http.Client
 }
 
+// NewClient creates a new weather forecast client with the given HTTP client.
 func NewClient(httpClient *http.Client) Client {
 	return &client{HttpClient: httpClient}
 }
 
-func (c *client) GetWhetherForecast(ctx context.Context, params GetWetherForecastRequestParams) (*GetWetherForecastResponse, error) {
+// GetWeatherForecast retrieves weather forecast data using the provided parameters.
+func (c *client) GetWeatherForecast(ctx context.Context, params GetWeatherForecastRequestParams) (*GetWeatherForecastResponse, error) {
 	httpReq, err := http.NewRequest("GET", locationForecastCompactURL, nil)
 	if err != nil {
 		return nil, err
@@ -36,7 +39,7 @@ func (c *client) GetWhetherForecast(ctx context.Context, params GetWetherForecas
 		return nil, err
 	}
 
-	resp := NewGetWetherForecastResponse()
+	resp := NewGetWeatherForecastResponse()
 	if err = resp.Read(httpResp); err != nil {
 		return nil, err
 	}
