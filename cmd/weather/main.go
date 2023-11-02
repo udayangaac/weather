@@ -21,6 +21,7 @@ import (
 const country = "Sweden"
 
 func main() {
+
 	var city string
 
 	// Parse the user input and store it in the 'city' variable.
@@ -36,7 +37,6 @@ func main() {
 
 	poller.Poll()
 
-	// Wait for OS signals to gracefully shut down the program.
 	<-osSig
 
 	poller.Stop()
@@ -46,13 +46,15 @@ func getCallback(city string, forecastService domain.ForecastService, geoCodingS
 	return func() (time.Duration, error) {
 		// Get the weather forecast for the specified city and country.
 		summary, duration, err := domain.GetForecast(country, city, forecastService, geoCodingService, time.Now().UTC())
-
-		if err != domain.ErrNotModified {
-			cli.Write(summary)
-		} else {
-			fmt.Println("Retrying...")
+		if err != nil && err != domain.ErrNotModified {
+			return duration, err
+		}
+		if err == domain.ErrNotModified {
+			return duration, err
 		}
 
+		cli.Write(*summary)
+		fmt.Printf("Weather forecast will be updated in %s\n", duration.String())
 		return duration, nil
 	}
 }

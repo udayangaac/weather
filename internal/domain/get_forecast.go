@@ -21,7 +21,7 @@ import (
 //	summary: The weather forecast summary for the given city and country.
 //	nextUpdate: The duration until the next forecast update is expected.
 //	err: An error, if any occurred during the retrieval process.
-func GetForecast(country string, city string, forecastService ForecastService, geoCodingService GeoCodingService, currentTime time.Time) (summary forecast.Summary, nextUpdate time.Duration, err error) {
+func GetForecast(country string, city string, forecastService ForecastService, geoCodingService GeoCodingService, currentTime time.Time) (summary *forecast.Summary, nextUpdate time.Duration, err error) {
 	var (
 		lat, lon float64
 	)

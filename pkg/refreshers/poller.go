@@ -43,12 +43,12 @@ func (p *poller) init() {
 			case <-pInternal.triggerChan:
 				duration, err := pInternal.callback()
 				if err != nil {
-					fmt.Printf("error: %s", err)
+					fmt.Printf("Unable execute the callback function. error: %s\n", err)
 					os.Exit(0)
 				}
 
 				if duration == 0 {
-					fmt.Printf("Next polling time is invalid")
+					fmt.Println("Next polling time is invalid")
 					os.Exit(0)
 				}
 
