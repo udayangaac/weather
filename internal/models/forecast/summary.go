@@ -2,10 +2,10 @@ package forecast
 
 // Summary represents the weather forecast summary.
 type Summary struct {
-	Title      string // Title of the forecast summary.
-	ExpiryTime string // Expiry time of the forecast.
-	Header     Header
-	Rows       []Row
+	Title   string // Title of the forecast summary.
+	Expires string // Expiry time of the forecast.
+	Header  Header
+	Rows    []Row
 }
 
 // Header represents the header information for the weather forecast.

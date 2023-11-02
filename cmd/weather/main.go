@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -44,8 +45,14 @@ func main() {
 func getCallback(city string, forecastService domain.ForecastService, geoCodingService domain.GeoCodingService) func() (time.Duration, error) {
 	return func() (time.Duration, error) {
 		// Get the weather forecast for the specified city and country.
-		summary, duration, err := domain.GetForecast(country, city, forecastService, geoCodingService)
-		cli.Write(summary)
-		return duration, err
+		summary, duration, err := domain.GetForecast(country, city, forecastService, geoCodingService, time.Now().UTC())
+
+		if err != domain.ErrNotModified {
+			cli.Write(summary)
+		} else {
+			fmt.Println("Retrying...")
+		}
+
+		return duration, nil
 	}
 }

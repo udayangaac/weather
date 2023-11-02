@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"log"
+	"fmt"
 	"time"
 
 	"github.com/udayangaac/weather/internal/models/forecast"
@@ -21,22 +21,35 @@ import (
 //	summary: The weather forecast summary for the given city and country.
 //	nextUpdate: The duration until the next forecast update is expected.
 //	err: An error, if any occurred during the retrieval process.
-func GetForecast(country string, city string, forecastService ForecastService, geoCodingService GeoCodingService) (summary forecast.Summary, nextUpdate time.Duration, err error) {
+func GetForecast(country string, city string, forecastService ForecastService, geoCodingService GeoCodingService, currentTime time.Time) (summary forecast.Summary, nextUpdate time.Duration, err error) {
 	var (
 		lat, lon float64
 	)
 
+	// Set the next forecast update duration (e.g., 5 seconds).
+	nextUpdate = time.Second * 5
+
 	// Get the coordinates (latitude and longitude) for the provided city and country.
 	lat, lon, err = geoCodingService.GetCoordByCityName(country, city)
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
 		return
 	}
 
 	// Retrieve the weather forecast summary for the given coordinates.
 	summary, err = forecastService.GetSummary(lat, lon)
+	if err != nil {
+		return
+	}
 
-	// Set the next forecast update duration (e.g., 5 seconds).
-	nextUpdate = time.Second * 5
+	fmt.Println(summary.Expires)
+
+	expiryTime, err := time.Parse(time.RFC1123, summary.Expires)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	nextUpdate = expiryTime.Sub(currentTime)
 	return
 }

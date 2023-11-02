@@ -1,6 +1,8 @@
 package refreshers
 
 import (
+	"fmt"
+	"os"
 	"time"
 )
 
@@ -36,16 +38,18 @@ func (p *poller) init() {
 			select {
 			case <-pInternal.stopChan:
 				pInternal.timer.Stop()
+				os.Exit(0)
 				return
 			case <-pInternal.triggerChan:
 				duration, err := pInternal.callback()
-
 				if err != nil {
-					return
+					fmt.Printf("error: %s", err)
+					os.Exit(0)
 				}
 
 				if duration == 0 {
-					p.stopChan <- struct{}{}
+					fmt.Printf("Next polling time is invalid")
+					os.Exit(0)
 				}
 
 				pInternal.timer = time.AfterFunc(duration, func() {

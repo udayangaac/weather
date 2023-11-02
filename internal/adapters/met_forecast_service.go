@@ -29,10 +29,14 @@ func (f *forecastService) GetSummary(latitude, longitude float64) (forecast.Summ
 	})
 
 	if err != nil {
+		if _, ok := err.(*operations.GetWeatherForecastNotModifiedResponse); ok {
+			return summary, domain.ErrNotModified
+		}
 		return summary, err
 	}
 
 	summary = forecast.Summary{
+		Expires: resp.Expires,
 		Header: forecast.Header{
 			Date:                "Date (UTC)",
 			Time:                "Time (UTC)",

@@ -17,9 +17,6 @@ func (r GetWeatherForecastRequestParams) Build(req *http.Request) error {
 	q.Add("lat", fmt.Sprintf("%.6f", r.Latitude))
 	q.Add("lon", fmt.Sprintf("%.6f", r.Longitude))
 	req.URL.RawQuery = q.Encode()
-
-	// TODO: Make this configurable.
-	req.Header.Add("User-Agent", "walker_udayangaac")
-
+	req.Header.Add(userAgentHeaderKey, "walker_udayangaac")
 	return nil
 }
