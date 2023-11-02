@@ -21,38 +21,44 @@ type forecastService struct {
 }
 
 // GetSummary retrieves weather forecast summary based on latitude and longitude.
-func (f *forecastService) GetSummary(latitude, longitude float64) (forecast.Summary, error) {
-	var summary forecast.Summary
+func (f *forecastService) GetSummary(latitude, longitude float64) (*forecast.Summary, error) {
 	resp, err := f.Client.GetWeatherForecast(context.Background(), operations.GetWeatherForecastRequestParams{
 		Latitude:  latitude,
 		Longitude: longitude,
 	})
 
 	if err != nil {
-		return summary, err
+		if _, ok := err.(*operations.GetWeatherForecastNotModifiedResponse); ok {
+			return nil, domain.ErrNotModified
+		}
+		return nil, err
 	}
 
-	summary = forecast.Summary{
+	summary := forecast.Summary{
+		Expires: resp.Expires,
 		Header: forecast.Header{
 			Date:                "Date (UTC)",
 			Time:                "Time (UTC)",
-			Temperature:         fmt.Sprintf("Temperature (%v)", resp.Body.Properties.Meta.Units.AirTemperature),
-			WindSpeed:           fmt.Sprintf("Wind Speed (%v)", resp.Body.Properties.Meta.Units.WindSpeed),
-			PrecipitationAmount: fmt.Sprintf("Precipitation (%v)", resp.Body.Properties.Meta.Units.PrecipitationAmount),
+			Temperature:         formatUnit("Temperature", resp.Body.Properties.Meta.Units.AirTemperature),
+			WindSpeed:           formatUnit("Wind Speed", resp.Body.Properties.Meta.Units.WindSpeed),
+			PrecipitationAmount: formatUnit("Precipitation", resp.Body.Properties.Meta.Units.PrecipitationAmount),
 		},
-		Rows: make([]forecast.Row, 0),
+		Rows: make([]forecast.Row, len(resp.Body.Properties.Timeseries)),
 	}
 
-	for _, val := range resp.Body.Properties.Timeseries {
-		row := forecast.Row{
+	for i, val := range resp.Body.Properties.Timeseries {
+		summary.Rows[i] = forecast.Row{
 			Date:                val.Time.Format(time.DateOnly),
 			Time:                val.Time.Format(time.TimeOnly),
 			Temperature:         val.Data.Instant.Details.AirTemperature,
 			WindSpeed:           val.Data.Instant.Details.WindSpeed,
 			PrecipitationAmount: val.Data.Instant.Details.PrecipitationAmount,
 		}
-		summary.Rows = append(summary.Rows, row)
 	}
 
-	return summary, nil
+	return &summary, nil
+}
+
+func formatUnit(name, unit string) string {
+	return fmt.Sprintf("%s (%v)", name, unit)
 }

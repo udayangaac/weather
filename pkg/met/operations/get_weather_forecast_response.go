@@ -17,11 +17,15 @@ func NewGetWeatherForecastResponse() *GetWeatherForecastResponse {
 
 // GetWeatherForecastResponse represents the response structure for weather forecasts
 type GetWeatherForecastResponse struct {
-	Body *models.WeatherForecastInfo
+	Expires string
+	Body    *models.WeatherForecastInfo
 }
 
 // Read reads and processes the HTTP response body
 func (r *GetWeatherForecastResponse) Read(resp *http.Response) error {
+
+	r.Expires = resp.Header.Get(expiresHeaderKey)
+
 	defer resp.Body.Close()
 
 	buf, err := io.ReadAll(resp.Body)

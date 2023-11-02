@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,6 +21,7 @@ import (
 const country = "Sweden"
 
 func main() {
+
 	var city string
 
 	// Parse the user input and store it in the 'city' variable.
@@ -35,7 +37,6 @@ func main() {
 
 	poller.Poll()
 
-	// Wait for OS signals to gracefully shut down the program.
 	<-osSig
 
 	poller.Stop()
@@ -44,8 +45,16 @@ func main() {
 func getCallback(city string, forecastService domain.ForecastService, geoCodingService domain.GeoCodingService) func() (time.Duration, error) {
 	return func() (time.Duration, error) {
 		// Get the weather forecast for the specified city and country.
-		summary, duration, err := domain.GetForecast(country, city, forecastService, geoCodingService)
-		cli.Write(summary)
-		return duration, err
+		summary, duration, err := domain.GetForecast(country, city, forecastService, geoCodingService, time.Now().UTC())
+		if err != nil && err != domain.ErrNotModified {
+			return duration, err
+		}
+		if err == domain.ErrNotModified {
+			return duration, err
+		}
+
+		cli.Write(*summary)
+		fmt.Printf("Weather forecast will be updated in %s\n", duration.String())
+		return duration, nil
 	}
 }
