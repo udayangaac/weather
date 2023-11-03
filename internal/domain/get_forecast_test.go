@@ -43,6 +43,7 @@ type MockGeoCodingService struct {
 	Error               error
 }
 
+
 func (m *MockGeoCodingService) GetCoordByCityName(country string, city string) (float64, float64, error) {
 	return m.Latitude, m.Longitude, m.Error
 }

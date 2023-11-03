@@ -47,6 +47,8 @@ func GetForecast(country string, city string, forecastService ForecastService, g
 	if err != nil {
 		return
 	}
+
+  
 	nextUpdate = expiryTime.Sub(currentTime)
 
 	summary.Title = "Weather forecast summary."
