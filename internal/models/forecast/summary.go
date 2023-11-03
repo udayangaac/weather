@@ -4,6 +4,8 @@ package forecast
 type Summary struct {
 	Title   string // Title of the forecast summary.
 	Expires string // Expiry time of the forecast.
+	City    string
+	Country string
 	Header  Header
 	Rows    []Row
 }
