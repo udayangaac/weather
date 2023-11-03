@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/udayangaac/weather/internal/models/forecast"
@@ -34,7 +33,6 @@ func GetForecast(country string, city string, forecastService ForecastService, g
 	// Get the coordinates (latitude and longitude) for the provided city and country.
 	lat, lon, err = geoCodingService.GetCoordByCityName(country, city)
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
 
@@ -44,13 +42,14 @@ func GetForecast(country string, city string, forecastService ForecastService, g
 		return
 	}
 
-	fmt.Println(summary.Expires)
-
 	expiryTime, err := time.Parse(time.RFC1123, summary.Expires)
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
+
+	summary.Title = "Weather forecast summary."
+	summary.City = city
+	summary.Country = country
 
 	nextUpdate = expiryTime.Sub(currentTime)
 	return

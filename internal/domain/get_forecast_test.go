@@ -26,7 +26,6 @@ func TestGetForecast(t *testing.T) {
 	geoCodingService := &MockGeoCodingService{}
 	forecastService := &MockForecastService{}
 
-	// Define a current time for testing.
 	currentTime := time.Now()
 
 	// Call the GetForecast function with mock services and current time.

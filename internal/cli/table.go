@@ -48,9 +48,12 @@ func getRows(rows []forecast.Row) []table.Row {
 
 // Write prints the forecast summary to the console
 func Write(summary forecast.Summary) {
-	t := table.New(getColumns(summary.Header)).WithRows(getRows(summary.Rows))
 	body := strings.Builder{}
-	body.WriteString(fmt.Sprintf("Updated @ %v\n", time.Now().Format(time.DateTime)))
-	body.WriteString(t.View())
+	body.WriteString(fmt.Sprintf("%v\n", summary.Title))
+	body.WriteString(fmt.Sprintf("Country: %v, City: %v\n", summary.Country, summary.City))
+	body.WriteString(fmt.Sprintf("Updated at %v (UTC)\n", time.Now().UTC().Format(time.DateTime)))
+	body.WriteString(table.New(getColumns(summary.Header)).
+		WithRows(getRows(summary.Rows)).
+		View())
 	fmt.Println(body.String())
 }

@@ -46,15 +46,22 @@ func getCallback(city string, forecastService domain.ForecastService, geoCodingS
 	return func() (time.Duration, error) {
 		// Get the weather forecast for the specified city and country.
 		summary, duration, err := domain.GetForecast(country, city, forecastService, geoCodingService, time.Now().UTC())
-		if err != nil && err != domain.ErrNotModified {
-			return duration, err
-		}
-		if err == domain.ErrNotModified {
+		if err != nil && err != domain.ErrNotModified && err != domain.ErrServiceBusy {
 			return duration, err
 		}
 
+		if err == domain.ErrNotModified {
+			fmt.Printf("Summary not modified. Retrying in: %s.\n", duration.String())
+			return duration, nil
+		}
+
+		if err == domain.ErrServiceBusy {
+			fmt.Printf("Outbound services are busy. Retrying in: %s.\n", duration.String())
+			return duration, nil
+		}
+
 		cli.Write(*summary)
-		fmt.Printf("Weather forecast will be updated in %s\n", duration.String())
+		fmt.Printf("Weather forecast will be updated in %s.\n", duration.String())
 		return duration, nil
 	}
 }
