@@ -31,6 +31,11 @@ func (f *forecastService) GetSummary(latitude, longitude float64) (*forecast.Sum
 		if _, ok := err.(*operations.GetWeatherForecastNotModifiedResponse); ok {
 			return nil, domain.ErrNotModified
 		}
+
+		if _, ok := err.(*operations.GetWeatherForecastTooManyRequestsResponse); ok {
+			return nil, domain.ErrServiceBusy
+		}
+
 		return nil, err
 	}
 
