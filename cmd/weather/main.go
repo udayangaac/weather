@@ -46,8 +46,7 @@ func getCallback(city string, forecastService domain.ForecastService, geoCodingS
 	return func() (time.Duration, error) {
 		// Get the weather forecast for the specified city and country.
 		summary, duration, err := domain.GetForecast(country, city, forecastService, geoCodingService, time.Now().UTC())
-
-		if err != nil && (err != domain.ErrNotModified || err != domain.ErrServiceBusy) {
+		if err != nil && err != domain.ErrNotModified && err != domain.ErrServiceBusy {
 			return duration, err
 		}
 
