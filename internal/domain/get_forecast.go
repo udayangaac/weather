@@ -42,15 +42,16 @@ func GetForecast(country string, city string, forecastService ForecastService, g
 		return
 	}
 
+	// Calculate duration until the next forecast update is expected.
 	expiryTime, err := time.Parse(time.RFC1123, summary.Expires)
 	if err != nil {
 		return
 	}
+	nextUpdate = expiryTime.Sub(currentTime)
 
 	summary.Title = "Weather forecast summary."
 	summary.City = city
 	summary.Country = country
 
-	nextUpdate = expiryTime.Sub(currentTime)
 	return
 }
