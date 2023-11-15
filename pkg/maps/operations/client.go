@@ -2,6 +2,7 @@ package operations
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -39,6 +40,10 @@ func (c *client) SearchPlace(ctx context.Context, params SearchPlaceRequestParam
 	httpResp, err := c.HTTPClient.Do(httpReq)
 	if err != nil {
 		return nil, err
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("search places error. http status: %v", httpResp.Status)
 	}
 
 	// Create a new response object and read the HTTP response into it.

@@ -2,6 +2,7 @@ package operations
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -60,6 +61,10 @@ func (c *client) GetWeatherForecast(ctx context.Context, params GetWeatherForeca
 
 	if httpResp.StatusCode == http.StatusTooManyRequests {
 		return nil, &GetWeatherForecastNotModifiedResponse{}
+	}
+
+	if httpResp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("get weather forecast error. http status: %v", httpResp.Status)
 	}
 
 	if lastModifiedStr := httpResp.Header.Get(lastModifiedHeaderKey); lastModifiedStr != "" {
